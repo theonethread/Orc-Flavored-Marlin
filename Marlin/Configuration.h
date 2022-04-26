@@ -603,9 +603,15 @@
     #define DEFAULT_Ki_LIST {   2.62,   2.62 }
     #define DEFAULT_Kd_LIST {  78.81,  78.81 }
   #else
-    #define DEFAULT_Kp  28.72
-    #define DEFAULT_Ki   2.62
-    #define DEFAULT_Kd  78.81
+    //#define DEFAULT_Kp  28.72
+    //#define DEFAULT_Ki   2.62
+    //#define DEFAULT_Kd  78.81
+    // >> M303 E0 C10 S200 U1 (extruder 0 cycles 10 temp 200 save to ram)
+    // >> M500 (save to eeprom)
+    // https://marlinfw.org/docs/gcode/M303.html
+    #define DEFAULT_Kp 20.94
+    #define DEFAULT_Ki 1.61
+    #define DEFAULT_Kd 68.28
   #endif
 #endif // PIDTEMP
 
@@ -644,9 +650,15 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 462.10
-  #define DEFAULT_bedKi 85.47
-  #define DEFAULT_bedKd 624.59
+  //#define DEFAULT_bedKp 462.10
+  //#define DEFAULT_bedKi 85.47
+  //#define DEFAULT_bedKd 624.59
+    // >> M303 E-1 C10 S60 U1 (bed -1 cycles 10 temp 60 save to ram)
+    // >> M500 (save to eeprom)
+    // https://marlinfw.org/docs/gcode/M303.html
+  #define DEFAULT_bedKp 195.84
+  #define DEFAULT_bedKi 37.09
+  #define DEFAULT_bedKd 689.37
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
