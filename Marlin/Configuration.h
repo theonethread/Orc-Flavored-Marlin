@@ -993,6 +993,8 @@
  */
 #define CLASSIC_JERK
 #if ENABLED(CLASSIC_JERK)
+  //#define DEFAULT_XJERK 10.0
+  //#define DEFAULT_YJERK 10.0
   #define DEFAULT_XJERK  8.0
   #define DEFAULT_YJERK  8.0
   #define DEFAULT_ZJERK  0.3
