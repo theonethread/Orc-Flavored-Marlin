@@ -1,4 +1,12 @@
-# Marlin 3D Printer Firmware
+# Orc Flavored Marlin
+
+This is my personal fork of the Marlin firmware using their `2.0.x` branch as base for my Ender-3 Pro with the following characteristics:
+
+* board: Creality 4.2.2 32bit
+* cpu: STM32F103 RET6
+* stepper driver: HR4988 (sharpie C on SD slot)
+
+## Original Marlin 3D Printer Firmware
 
 ![GitHub](https://img.shields.io/github/license/marlinfirmware/marlin.svg)
 ![GitHub contributors](https://img.shields.io/github/contributors/marlinfirmware/marlin.svg)
