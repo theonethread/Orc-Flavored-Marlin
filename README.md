@@ -1,6 +1,6 @@
 # Orc Flavored Marlin
 
-This is my personal fork of the Marlin firmware using their `2.0.x` branch as base for my Ender-3 Pro with the following characteristics:
+This is my personal fork of the Marlin firmware using their `2.1.x` branch as base for my Ender-3 Pro with the following characteristics:
 
 * board: Creality 4.2.2 32bit
 * cpu: STM32F103 RET6
