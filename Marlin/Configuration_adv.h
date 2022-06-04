@@ -32,7 +32,7 @@
  *
  * Basic settings can be found in Configuration.h
  */
-#define CONFIGURATION_ADV_H_VERSION 02000903
+#define CONFIGURATION_ADV_H_VERSION 02000904
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -1324,6 +1324,7 @@
 
 #if ANY(HAS_DISPLAY, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI)
   //#define SOUND_MENU_ITEM   // Add a mute option to the LCD menu
+  #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
 #endif
 
 #if EITHER(HAS_DISPLAY, DWIN_LCD_PROUI)
@@ -1665,13 +1666,24 @@
   //#define XYZ_NO_FRAME
   #define XYZ_HOLLOW_FRAME
 
-  // A bigger font is available for edit items. Costs 3120 bytes of PROGMEM.
+  // A bigger font is available for edit items. Costs 3120 bytes of flash.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
   //#define USE_BIG_EDIT_FONT
 
-  // A smaller font may be used on the Info Screen. Costs 2434 bytes of PROGMEM.
+  // A smaller font may be used on the Info Screen. Costs 2434 bytes of flash.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
   //#define USE_SMALL_INFOFONT
+
+  /**
+   * Graphical Display Sleep
+   *
+   * The U8G library provides sleep / wake functions for SH1106, SSD1306,
+   * SSD1309, and some other DOGM displays.
+   * Enable this option to save energy and prevent OLED pixel burn-in.
+   * Adds the menu item Configuration > LCD Timeout (m) to set a wait period
+   * from 0 (disabled) to 99 minutes.
+   */
+  //#define DISPLAY_SLEEP_MINUTES 2  // (minutes) Timeout before turning off the screen
 
   /**
    * ST7920-based LCDs can emulate a 16 x 4 character display using
@@ -1714,7 +1726,7 @@
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of PROGMEM.
+  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
 
   // Frivolous Game Options
   //#define MARLIN_BRICKOUT
@@ -1739,7 +1751,6 @@
 // Additional options for DGUS / DWIN displays
 //
 #if HAS_DGUS_LCD
-  #define LCD_SERIAL_PORT 3
   #define LCD_BAUDRATE 115200
 
   #define DGUS_RX_BUFFER_SIZE 128
@@ -2260,7 +2271,7 @@
 #define BUFSIZE 4
 
 // Transmission to Host Buffer Size
-// To save 386 bytes of PROGMEM (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
+// To save 386 bytes of flash (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
 // To buffer a simple "ok" you need 4 bytes.
 // For ADVANCED_OK (M105) you need 32 bytes.
 // For debug-echo: 128 bytes for the optimal speed.
@@ -2445,12 +2456,16 @@
     #define TOOLCHANGE_FS_FAN_SPEED          255  // 0-255
     #define TOOLCHANGE_FS_FAN_TIME            10  // (seconds)
 
-    // Swap uninitialized extruder (using TOOLCHANGE_FS_PRIME_SPEED feedrate)
-    // (May break filament if not retracted beforehand.)
-    //#define TOOLCHANGE_FS_INIT_BEFORE_SWAP
+    // Use TOOLCHANGE_FS_PRIME_SPEED feedrate the first time each extruder is primed
+    //#define TOOLCHANGE_FS_SLOW_FIRST_PRIME
 
-    // Prime on the first T0 (For other tools use TOOLCHANGE_FS_INIT_BEFORE_SWAP)
-    // Enable with M217 V1 before printing to avoid unwanted priming on host connect
+    /**
+     * Prime T0 the first time T0 is sent to the printer:
+     *  [ Power-On -> T0 { Activate & Prime T0 } -> T1 { Retract T0, Activate & Prime T1 } ]
+     * If disabled, no priming on T0 until switching back to T0 from another extruder:
+     *  [ Power-On -> T0 { T0 Activated } -> T1 { Activate & Prime T1 } -> T0 { Retract T1, Activate & Prime T0 } ]
+     * Enable with M217 V1 before printing to avoid unwanted priming on host connect.
+     */
     //#define TOOLCHANGE_FS_PRIME_FIRST_USED
 
     /**
@@ -3529,6 +3544,16 @@
     #define LASER_TEST_PULSE_MIN           1   // Used with Laser Control Menu
     #define LASER_TEST_PULSE_MAX         999   // Caution: Menu may not show more than 3 characters
 
+   /**
+    * Laser Safety Timeout
+    *
+    * The laser should be turned off when there is no movement for a period of time.
+    * Consider material flammability, cut rate, and G-code order when setting this
+    * value. Too low and it could turn off during a very slow move; too high and
+    * the material could ignite.
+    */
+    #define LASER_SAFETY_TIMEOUT_MS     1000   // (ms)
+
     /**
      * Enable inline laser power to be handled in the planner / stepper routines.
      * Inline power is specified by the I (inline) flag in an M3 command (e.g., M3 S20 I)
@@ -3740,6 +3765,9 @@
  * Auto-report temperatures with M155 S<seconds>
  */
 #define AUTO_REPORT_TEMPERATURES
+#if ENABLED(AUTO_REPORT_TEMPERATURES) && TEMP_SENSOR_REDUNDANT
+  //#define AUTO_REPORT_REDUNDANT // Include the "R" sensor in the auto-report
+#endif
 
 /**
  * Auto-report position with M154 S<seconds>
