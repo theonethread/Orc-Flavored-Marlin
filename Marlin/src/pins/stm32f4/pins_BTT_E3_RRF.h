@@ -186,11 +186,11 @@
 /**
  *              BTT E3 RRF
  *                ------
- * (BEEPER)  PE8 |10  9 | PE9  (BTN_ENC)
- * (BTN_EN1) PE7 | 8  7 | RESET
- * (BTN_EN2) PB2   6  5 | PE10 (LCD_D4)
- * (LCD_RS)  PB1 | 4  3 | PE11 (LCD_EN)
- *           GND | 2  1 | 5V
+ * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)
+ * (BTN_EN1) PE7 | 3  4 | RESET
+ * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)
+ * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)
+ *           GND | 9 10 | 5V
  *                ------
  *                 EXP1
  */
@@ -211,17 +211,19 @@
 
     #if ENABLED(LCD_FOR_MELZI)
 
-      #error "CAUTION! LCD_FOR_MELZI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
+      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+        #error "CAUTION! LCD_FOR_MELZI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+      #endif
 
      /** LCD_FOR_MELZI display pinout
       *
       *               BTT E3 RRF                                   Display Ribbon
       *                ------                                         ------
-      * (BEEPER)  PE8 |10  9 | PE9  (BTN_ENC)                    GND |10  9 | 5V
-      * (BTN_EN1) PE7 | 8  7 | RESET                          BEEPER | 8  7 | ESTOP    (RESET)
-      * (BTN_EN2) PB2   6  5 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 6  5 | LCD_SCLK (LCD_D4)
-      * (LCD_RS)  PB1 | 4  3 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 4  3 | LCD_DATA (LCD_EN)
-      *           GND | 2  1 | 5V                  (BTN_EN1) ENC_B   | 2  1 | LCD_CS   (LCD_RS)
+      * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)                    GND | 1  2 | 5V
+      * (BTN_EN1) PE7 | 3  4 | RESET                          BEEPER | 3  4 | ESTOP    (RESET)
+      * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 5  6 | LCD_SCLK (LCD_D4)
+      * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 7  8 | LCD_DATA (LCD_EN)
+      *           GND | 9 10 | 5V                  (BTN_EN1) ENC_B   | 9 10 | LCD_CS   (LCD_RS)
       *                ------                                         ------
       *                 EXP1                                          Ribbon
       *
@@ -245,7 +247,9 @@
 
   #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-    #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
+    #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+      #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #endif
 
     #define LCD_PINS_RS                     PE10
     #define LCD_PINS_ENABLE                 PE9
@@ -273,18 +277,20 @@
 
     #if ENABLED(TFTGLCD_PANEL_SPI)
 
-      #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
+      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+        #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+      #endif
 
       /**
        * TFTGLCD_PANEL_SPI display pinout
        *
        *                  Board                       Display
        *                  ------                       ------
-       * (SD_DET)    PE8 |10  9 | PE9 (BEEPER)     5V |10  9 | GND
-       * (MOD_RESET) PE7 | 8  7 | RESET            -- | 8  7 | (SD_DET)
-       * (SD_CS)     PB2   6  5 | PE10        (MOSI)    6  5 | --
-       * (LCD_CS)    PB1 | 4  3 | PE11        (SD_CS) | 4  3 | (LCD_CS)
-       *             GND | 2  1 | 5V          (SCK)   | 2  1 | (MISO)
+       * (SD_DET)    PE8 | 1  2 | PE9 (BEEPER)     5V | 1  2 | GND
+       * (MOD_RESET) PE7 | 3  4 | RESET            -- | 3  4 | (SD_DET)
+       * (SD_CS)     PB2   5  6 | PE10        (MOSI)    5  6 | --
+       * (LCD_CS)    PB1 | 7  8 | PE11        (SD_CS) | 7  8 | (LCD_CS)
+       *             GND | 9 10 | 5V          (SCK)   | 9 10 | (MISO)
        *                  ------                       ------
        *                   EXP1                         EXP1
        *
@@ -327,17 +333,19 @@
 
 #if BOTH(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
 
-  #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. Comment out this line to continue."
+  #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+    #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_E3_RRF.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+  #endif
 
   /** FYSETC TFT TFT81050 display pinout
    *
    *                  Board                          Display
    *                  ------                          ------
-   * (SD_DET)    PE8 |10  9 | PE9 (BEEPER)        5V |10  9 | GND
-   * (MOD_RESET) PE7 | 8  7 | RESET            RESET | 8  7 | (SD_DET)
-   * (SD_CS)     PB2   6  5 | PE10           (MOSI)  | 6  5 | (LCD_CS)
-   * (LCD_CS)    PB1 | 4  3 | PE11           (SD_CS) | 4  3 | (MOD_RESET)
-   *             GND | 2  1 | 5V             (SCK)   | 2  1 | (MISO)
+   * (SD_DET)    PE8 | 1  2 | PE9 (BEEPER)        5V | 1  2 | GND
+   * (MOD_RESET) PE7 | 3  4 | RESET            RESET | 3  4 | (SD_DET)
+   * (SD_CS)     PB2   5  6 | PE10           (MOSI)  | 5  6 | (LCD_CS)
+   * (LCD_CS)    PB1 | 7  8 | PE11           (SD_CS) | 7  8 | (MOD_RESET)
+   *             GND | 9 10 | 5V             (SCK)   | 9 10 | (MISO)
    *                  ------                          ------
    *                   EXP1                            EXP1
    *
