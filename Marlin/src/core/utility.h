@@ -59,6 +59,11 @@ void safe_delay(millis_t ms);           // Delay ensuring that temperatures are 
   #define log_machine_info() NOOP
 #endif
 
+/**
+ * A restorer instance remembers a variable's value before setting a
+ * new value, then restores the old value when it goes out of scope.
+ * Put operator= on your type to get extended behavior on value change.
+ */
 template<typename T>
 class restorer {
   T& ref_;
@@ -79,8 +84,7 @@ constexpr uint8_t ui8_to_percent(const uint8_t i) { return (int(i) * 100 + 127) 
 
 // Axis names for G-code parsing, reports, etc.
 const xyze_char_t axis_codes LOGICAL_AXIS_ARRAY('E', 'X', 'Y', 'Z', AXIS4_NAME, AXIS5_NAME, AXIS6_NAME);
-
-#if LINEAR_AXES <= XYZ
+#if NUM_AXES <= XYZ && !HAS_EXTRUDERS
   #define AXIS_CHAR(A) ((char)('X' + A))
   #define IAXIS_CHAR AXIS_CHAR
 #else

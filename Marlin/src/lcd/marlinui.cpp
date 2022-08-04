@@ -121,17 +121,9 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
   bool MarlinUI::sound_on = ENABLED(SOUND_ON_DEFAULT);
 #endif
 
-#if EITHER(PCA9632_BUZZER, HAS_BEEPER)
-  #if ENABLED(PCA9632_BUZZER)
-    #include "../feature/leds/pca9632.h"
-  #endif
+#if ENABLED(PCA9632_BUZZER)
   void MarlinUI::buzz(const long duration, const uint16_t freq) {
-    if (!sound_on) return;
-    #if ENABLED(PCA9632_BUZZER)
-      PCA9632_buzz(duration, freq);
-    #elif HAS_BEEPER
-      buzzer.tone(duration, freq);
-    #endif
+    if (sound_on) PCA9632_buzz(duration, freq);
   }
 #endif
 
@@ -489,13 +481,10 @@ void MarlinUI::init() {
         ui.manual_move.menu_scale = REPRAPWORLD_KEYPAD_MOVE_STEP;
         ui.encoderPosition = dir;
         switch (axis) {
-          case X_AXIS: { void lcd_move_x(); lcd_move_x(); } break;
-          #if HAS_Y_AXIS
-            case Y_AXIS: { void lcd_move_y(); lcd_move_y(); } break;
-          #endif
-          #if HAS_Z_AXIS
-            case Z_AXIS: { void lcd_move_z(); lcd_move_z(); } break;
-          #endif
+          case X_AXIS:
+          TERN_(HAS_Y_AXIS, case Y_AXIS:)
+          TERN_(HAS_Z_AXIS, case Z_AXIS:)
+            lcd_move_axis(axis);
           default: break;
         }
       }
@@ -688,7 +677,7 @@ void MarlinUI::init() {
       if (old_frm != new_frm) {
         feedrate_percentage = new_frm;
         encoderPosition = 0;
-        #if BOTH(HAS_BUZZER, BEEP_ON_FEEDRATE_CHANGE)
+        #if BOTH(HAS_SOUND, BEEP_ON_FEEDRATE_CHANGE)
           static millis_t next_beep;
           #ifndef GOT_MS
             const millis_t ms = millis();
@@ -746,11 +735,12 @@ void MarlinUI::init() {
       UNUSED(clear_buttons);
     #endif
 
-    #if HAS_CHIRP
-      chirp(); // Buzz and wait. Is the delay needed for buttons to settle?
-      #if BOTH(HAS_MARLINUI_MENU, HAS_BEEPER)
+    chirp();  // Buzz and wait. Is the delay needed for buttons to settle?
+
+    #if HAS_CHIRP && HAS_MARLINUI_MENU
+      #if HAS_BEEPER
         for (int8_t i = 5; i--;) { buzzer.tick(); delay(2); }
-      #elif HAS_MARLINUI_MENU
+      #else
         delay(10);
       #endif
     #endif
@@ -841,7 +831,7 @@ void MarlinUI::init() {
             TERN_(MULTI_E_MANUAL, axis == E_AXIS ? e_index :) active_extruder
           );
 
-          //SERIAL_ECHOLNPGM("Add planner.move with Axis ", AS_CHAR(axis_codes[axis]), " at FR ", fr_mm_s);
+          //SERIAL_ECHOLNPGM("Add planner.move with Axis ", AS_CHAR(AXIS_CHAR(axis)), " at FR ", fr_mm_s);
 
           axis = NO_AXIS_ENUM;
 
@@ -858,7 +848,7 @@ void MarlinUI::init() {
       TERN_(MULTI_E_MANUAL, if (move_axis == E_AXIS) e_index = eindex);
       start_time = millis() + (menu_scale < 0.99f ? 0UL : 250UL); // delay for bigger moves
       axis = move_axis;
-      //SERIAL_ECHOLNPGM("Post Move with Axis ", AS_CHAR(axis_codes[axis]), " soon.");
+      //SERIAL_ECHOLNPGM("Post Move with Axis ", AS_CHAR(AXIS_CHAR(axis)), " soon.");
     }
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)

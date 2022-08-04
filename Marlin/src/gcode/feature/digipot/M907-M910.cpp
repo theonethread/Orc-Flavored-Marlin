@@ -48,7 +48,7 @@
 void GcodeSuite::M907() {
   #if HAS_MOTOR_CURRENT_SPI
 
-    if (!parser.seen("BS" LOGICAL_AXES_STRING))
+    if (!parser.seen("BS" STR_AXES_LOGICAL))
       return M907_report();
 
     if (parser.seenval('S')) LOOP_L_N(i, MOTOR_CURRENT_COUNT) stepper.set_digipot_current(i, parser.value_int());
@@ -85,7 +85,7 @@ void GcodeSuite::M907() {
       if (parser.seenval('S')) LOOP_L_N(a, MOTOR_CURRENT_COUNT) stepper.set_digipot_current(a, parser.value_int());
 
       #if HAS_X_Y_XY_I_J_K
-        if (LINEAR_AXIS_GANG(
+        if (NUM_AXIS_GANG(
                parser.seenval('X'), || parser.seenval('Y'), || false,
             || parser.seenval('I'), || parser.seenval('J'), || parser.seenval('K')
         )) stepper.set_digipot_current(0, parser.value_int());
@@ -108,7 +108,7 @@ void GcodeSuite::M907() {
     // Additional extruders use B,C,D.
     // TODO: Change these parameters because 'E' is used and because 'D' should be reserved for debugging. B<index>?
     #if E_STEPPERS >= 2
-      for (uint8_t i = E_AXIS + 1; i < _MAX(DIGIPOT_I2C_NUM_CHANNELS, (NUM_AXES + 3)); i++)
+      for (uint8_t i = E_AXIS + 1; i <= _MIN(DIGIPOT_I2C_NUM_CHANNELS - 1, E_AXIS + 3); i++) // Up to B=E1 C=E2 D=E3
         if (parser.seenval('B' + i - (E_AXIS + 1))) digipot_i2c.set_current(i, parser.value_float());
     #endif
   #endif

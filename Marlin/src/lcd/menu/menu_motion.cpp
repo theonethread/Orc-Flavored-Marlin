@@ -77,6 +77,7 @@ void lcd_move_axis(const AxisEnum axis) {
   }
   ui.encoderPosition = 0;
   if (ui.should_draw()) {
+    MenuEditItemBase::itemIndex = axis;
     const float pos = ui.manual_move.axis_value(axis);
     if (parser.using_inch_units()) {
       const float imp_pos = LINEAR_UNIT(pos);
@@ -86,9 +87,6 @@ void lcd_move_axis(const AxisEnum axis) {
       MenuEditItemBase::draw_edit_screen(GET_TEXT_F(MSG_MOVE_N), ui.manual_move.menu_scale >= 0.1f ? (LARGE_AREA_TEST ? ftostr51sign(pos) : ftostr41sign(pos)) : ftostr63(pos));
   }
 }
-
-// Move Z easy accessor
-void lcd_move_z() { lcd_move_axis(Z_AXIS); }
 
 #if E_MANUAL
 
@@ -121,7 +119,7 @@ void lcd_move_z() { lcd_move_axis(Z_AXIS); }
 
   void _goto_manual_move_z(const_float_t scale) {
     ui.manual_move.menu_scale = scale;
-    ui.goto_screen(lcd_move_z);
+    ui.goto_screen([]{ lcd_move_axis(Z_AXIS); });
   }
 
 #endif
@@ -146,7 +144,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
   START_MENU();
 
   if (LCD_HEIGHT >= 4) {
-    if (axis < LINEAR_AXES)
+    if (axis < NUM_AXES)
       STATIC_ITEM_N(axis, MSG_MOVE_N, SS_DEFAULT|SS_INVERT);
     else {
       TERN_(MANUAL_E_MOVES_RELATIVE, ui.manual_move.e_origin = current_position.e);
@@ -220,7 +218,7 @@ void menu_move() {
     }
     #if HAS_Z_AXIS
       #define _AXIS_MOVE(N) SUBMENU_N(N, MSG_MOVE_N, []{ _menu_move_distance(AxisEnum(N), []{ lcd_move_axis(AxisEnum(N)); }); });
-      REPEAT_S(2, LINEAR_AXES, _AXIS_MOVE);
+      REPEAT_S(2, NUM_AXES, _AXIS_MOVE);
     #endif
   }
   else
