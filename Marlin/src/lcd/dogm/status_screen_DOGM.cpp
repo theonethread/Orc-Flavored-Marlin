@@ -432,7 +432,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
   const bool is_inch = parser.using_inch_units();
   const AxisEnum a = TERN(LCD_SHOW_E_TOTAL, axis == E_AXIS ? X_AXIS : axis, axis);
   const uint8_t offs = a * (is_inch ? XYZ_SPACING_IN : XYZ_SPACING);
-  lcd_put_lchar((is_inch ? X_LABEL_POS_IN : X_LABEL_POS) + offs, XYZ_BASELINE, axis_codes[axis]);
+  lcd_put_lchar((is_inch ? X_LABEL_POS_IN : X_LABEL_POS) + offs, XYZ_BASELINE, AXIS_CHAR(axis));
   lcd_moveto((is_inch ? X_VALUE_POS_IN : X_VALUE_POS) + offs, XYZ_BASELINE);
 
   if (blink)
@@ -670,7 +670,7 @@ void MarlinUI::draw_status_screen() {
 
     // Laser / Spindle
     #if DO_DRAW_CUTTER
-      if (cutter.isReady && PAGE_CONTAINS(STATUS_CUTTER_TEXT_Y - INFO_FONT_ASCENT, STATUS_CUTTER_TEXT_Y - 1)) {
+      if (cutter.isReadyForUI && PAGE_CONTAINS(STATUS_CUTTER_TEXT_Y - INFO_FONT_ASCENT, STATUS_CUTTER_TEXT_Y - 1)) {
         #if CUTTER_UNIT_IS(PERCENT)
           lcd_put_u8str(STATUS_CUTTER_TEXT_X, STATUS_CUTTER_TEXT_Y, cutter_power2str(cutter.unitPower));
         #elif CUTTER_UNIT_IS(RPM)
